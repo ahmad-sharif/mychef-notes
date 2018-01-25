@@ -1,0 +1,49 @@
+Install chef-solo:
+wget https://packages.chef.io/files/stable/chef/13.7.16/ubuntu/16.04/chef_13.7.16-1_amd64.deb
+
+dpkg -i chef_13.7.16-1_amd64.deb
+
+
+>> chef -v
+
+
+>> chef generate cookbook cookbook-name
+
+Add the below lines to first_cookbook/recipes/default.rb file
+
+file "/home/user/hello.txt" do
+  content "Hello, this is my first cookbook recipe\n"
+  action :create
+end
+
+Let us write a solo.rb to execute the test recipe:
+
+solo.rb
+--------
+
+file_cache_path "/home/user/cache"
+cookbook_path "/home/user/chef"
+
+Create a json file to specify the recipes to be run:
+
+web.json
+-------- 
+
+{
+ "run_list": [ "recipe[cookbook-name]" ]
+}
+
+Now, execute the below chef-solo command to test your recipe.
+
+>> chef-solo -c solo.rb -j web.json
+
+You can add another recipe second.recipe and update the run_list to run this as well as below:
+
+web.json
+--------
+
+{
+ "run_list": [ "recipe[first_cookbook]", 
+               "recipe[first_cookbook::second]"
+             ]
+}
